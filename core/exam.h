@@ -28,6 +28,11 @@ class Result {
 
     public:
     Result(unsigned exam_id, unsigned student_id, double grade_id);
+
+    inline unsigned getExamID() const { return exam_id; }
+    inline unsigned getStudentID() const { return student_id; }
+    inline double getGrade() const { return grade; }
+
     friend class Exam;
 };
 

@@ -13,7 +13,12 @@ class User {
 
     public:
     User(const string &user, const string &pass);
-    bool verifyPassword(const string &pass);
+
+    inline unsigned getID() const { return id; }
+    inline const string &getUsername() const { return username; }
+    inline const string &getPassword() const { return password; }
+
+    bool verifyPassword(const string &pass) const;
 };
 
 class Admin: public User {

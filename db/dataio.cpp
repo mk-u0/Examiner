@@ -23,9 +23,7 @@ DataIO::~DataIO() {
 }
 
 
-int DataIO::addAdmin(const Admin &a) { /* TODO */ }
-int DataIO::addStudent(const Student &student) { /* TODO */ }
-int DataIO::addResult(const Result &res) { /* TODO */ }
+
 Admin DataIO::getAdminByUser(const std::string &username) { /* TODO */ }
 Student getStudentByUser(const std::string &username) { /* TODO */ }
 std::vector<Result> DataIO::getResultByStudentID(unsigned student_id) { /* TODO */ }

@@ -3,6 +3,7 @@ target_sources(dbio
     PRIVATE
     # insert implementation files (.cpp) under this comment
     dataio.cpp
+    dataio_insert.cpp
     PUBLIC
     FILE_SET dbio_headers
     TYPE HEADERS

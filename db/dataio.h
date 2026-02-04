@@ -14,9 +14,12 @@ class DataIO {
     DataIO(const std::string &path);
     ~DataIO();
 
+    /* Data insertion functions */
     int addAdmin(const Admin &admin);
     int addStudent(const Student &student);
     int addResult(const Result &res);
+
+    /* Data selection functions */
     Admin getAdminByUser(const std::string &username);
     Student getStudentByUser(const std::string &username);
     std::vector<Result> getResultByStudentID(unsigned student_id);
