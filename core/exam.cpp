@@ -1,7 +1,8 @@
-#include <exam.h>
+#include "exam.h"
 
 
-const Question &Exam::question(unsigned i) {
+const Question &Exam::question(unsigned i)
+{
     return questions[i];
 }
 
@@ -11,12 +12,63 @@ Result::Result(unsigned exam_id, unsigned student_id, double grade) {
     this->grade = grade;
 }
 
-std::vector<bool> Exam::checkAnswer(const std::vector<unsigned> &answer) {
+std::vector<bool> Exam::checkAnswer(const std::vector<unsigned> &answer)
+{
     std::vector<bool> res(size());
-    for (std::size_t i = 0; i < size(); i++) {
+    for (std::size_t i = 0; i < size(); i++)
+    {
         res[i] = (answer[i] == questions[i].correct);
     }
     return res;
+}
+
+std::string Exam::serialize()
+{
+    nlohmann::json j;
+    j["exam_id"] = this->id;
+    j["duration_minutes"] = this->duration;
+
+    nlohmann::json questions_array = nlohmann::json::array();
+    for (const auto &q : this->questions)
+    {
+        nlohmann::json temp_j;
+        to_json(temp_j, q);
+        questions_array.push_back(temp_j);
+    }
+    j["questions"] = questions_array;
+
+    return j.dump(4);
+}
+void Exam::deserialize(const std::string &filename)
+{
+    std::ifstream file(filename);
+    if (!file.is_open()){
+        std::cout << "Error: Could not open file" << std::endl;
+        return;
+    }
+
+    try
+    {
+        nlohmann::json j;
+        file >> j;
+
+        j.at("exam_id").get_to(this->id);
+        j.at("duration_minutes").get_to(this->duration);
+
+        this->questions.clear();
+        for (const auto &item : j.at("questions"))
+        {
+            Question q;
+            from_json(item, q);
+            this->questions.push_back(q);
+        }
+
+        std::cout << "Success: Loaded " << questions.size() << " questions." << std::endl;
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << "JSON Error: " << e.what() << std::endl;
+    }
 }
 
 Result Exam::getResult(const std::vector<unsigned> &answer, unsigned student_id) {
@@ -28,4 +80,3 @@ Result Exam::getResult(const std::vector<unsigned> &answer, unsigned student_id)
     double grade = static_cast<double>(correct_num) / size();
     return Result(id, student_id, grade);
 }
-
