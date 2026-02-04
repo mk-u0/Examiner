@@ -7,6 +7,6 @@ User::User(const string &user, const string &pass) {
     password = hashPassword(pass);
 }
 
-bool User::verifyPassword(const string &pass) {
+bool User::verifyPassword(const string &pass) const {
     return password == hashPassword(pass);
 }
