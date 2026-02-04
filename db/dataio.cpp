@@ -1,28 +1,34 @@
-#include <dataio.h>
+#include "dataio.h"
 #include <sqlite3.h>
-#include <string>
+#include <iostream>
+#include <fstream>
 #include <sstream>
-//#include <fmt/core.h>
 
-using std::string, std::stringstream;
+static int callback(void*, int argc, char** argv, char** col_name) { return 0; }
 
+void DataIO::init() {
+    sqlite3* db;
+    char* err_msg = 0;
 
-/* Constructor and Destructor */
-
-DataIO::DataIO(const string &path) {
-    int rc;
-    rc = sqlite3_open(path.c_str(), &dbcon);
-    if (rc != SQLITE_OK) {
-        throw sqlite3_errmsg(dbcon);
+    // 1. Open Connection
+    if (sqlite3_open("data.db", &db) != SQLITE_OK) {
+        std::cerr << "DB Error: " << sqlite3_errmsg(db) << std::endl;
+        return;
     }
-}
 
-DataIO::~DataIO() {
-    sqlite3_close(dbcon);
-    dbcon = nullptr;
-}
+    // 2. Read Schema File
+    std::ifstream sqlFile("schema.sql");
+    if (!sqlFile.is_open()) {
+        std::cerr << "File Error: schema.sql missing!" << std::endl;
+        sqlite3_close(db);
+        return;
+    }
 
+    std::stringstream buffer;
+    buffer << sqlFile.rdbuf();
+    std::string sql = buffer.str();
 
+<<<<<<< HEAD
 // Garbage to be deleted
 static int callback(void *, int argc, char **argv, char **col_name) {
     return 0;
@@ -42,3 +48,15 @@ void DataIO::create_table() {
     ;
     rc = sqlite3_exec(dbcon, sql, callback, NULL, &err_msg);
 }
+=======
+    // 3. Execute SQL
+    if (sqlite3_exec(db, sql.c_str(), callback, 0, &err_msg) != SQLITE_OK) {
+        std::cerr << "SQL Error: " << err_msg << std::endl;
+        sqlite3_free(err_msg);
+    } else {
+        std::cout << "Database initialized successfully." << std::endl;
+    }
+
+    sqlite3_close(db);
+}
+>>>>>>> 8f23868 (final database task)

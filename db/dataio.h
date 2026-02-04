@@ -1,13 +1,8 @@
 #ifndef _DATAIO_H_
 #define _DATAIO_H_
 
-#include <sqlite3.h>
-#include <string>
-#include <vector>
-#include <user.h>
-#include <exam.h>
-
 class DataIO {
+<<<<<<< HEAD
     private:
     sqlite3 *dbcon;
     public:
@@ -28,6 +23,11 @@ class DataIO {
 
     // Dummy function to be removed later
     void create_table();
+=======
+public:
+    void init();
+    
+>>>>>>> 8f23868 (final database task)
 };
 
 #endif /* _DATAIO_H_ */
