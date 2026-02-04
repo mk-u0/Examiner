@@ -3,47 +3,57 @@
 
 #include <vector>
 #include <string>
-
-class Question {
-    public:
+#include <fstream>
+#include <iostream>
+#include "json.hpp"
+class Question
+{
+public:
     typedef std::vector<std::string> Choice;
 
-    private:
+private:
     unsigned id;
     std::string text;
     Choice choice;
     unsigned correct;
 
-    public:
+public:
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE(Question, id, text, choice, correct)
+    
     inline unsigned get_correct() { return correct; }
 
     friend class Exam;
 };
 
-class Result {
-    private:
+class Result
+{
+private:
     unsigned exam_id;
     unsigned student_id;
     double grade;
 
-    public:
+public:
     Result(unsigned exam_id, unsigned student_id, double grade_id);
     friend class Exam;
 };
 
-class Exam {
-    private:
+class Exam
+{
+private:
     unsigned id;
     std::vector<Question> questions;
     unsigned duration;
 
-    public:
-    Exam();
+public:
+    Exam() {}
     inline std::size_t size() const { return questions.size(); }
     const Question &question(unsigned i);
     std::vector<bool> checkAnswer(const std::vector<unsigned> &answer);
     Result getResult(const std::vector<unsigned> &answer, unsigned student_id);
-};
+    Result check_answer(const std::vector<unsigned> &answer);
 
+    std::string serialize();
+    void deserialize(const std::string &filename);
+};
 
 #endif
