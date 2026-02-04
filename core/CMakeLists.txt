@@ -1,21 +1,18 @@
-add_library(dbio)
-target_sources(dbio
+add_library(core)
+target_sources(core
     PRIVATE
     # insert implementation files (.cpp) under this comment
-    dataio.cpp
+    util.cpp
+    user.cpp
+    exam.cpp
     PUBLIC
-    FILE_SET dbio_headers
+    FILE_SET core_headers
     TYPE HEADERS
     BASE_DIRS
         .
     FILES
     # insert header files under this comment
-    dataio.h
-)
-
-target_link_libraries(dbio
-    PRIVATE
-    core
-    SQLite::SQLite3
-#    fmt::fmt
+    user.h
+    util.h
+    exam.h
 )

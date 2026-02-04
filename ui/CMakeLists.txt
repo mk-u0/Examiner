@@ -1,21 +1,19 @@
-add_library(dbio)
-target_sources(dbio
+add_library(ui)
+target_sources(ui
     PRIVATE
     # insert implementation files (.cpp) under this comment
-    dataio.cpp
+    login.cpp
     PUBLIC
-    FILE_SET dbio_headers
+    FILE_SET ui_headers
     TYPE HEADERS
     BASE_DIRS
         .
     FILES
     # insert header files under this comment
-    dataio.h
+    login.h
 )
 
-target_link_libraries(dbio
+target_link_libraries(ui
     PRIVATE
-    core
-    SQLite::SQLite3
-#    fmt::fmt
+    ${wxWidgets_LIBRARIES}
 )
