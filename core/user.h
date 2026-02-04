@@ -10,14 +10,20 @@ class User {
     unsigned id;
     string username;
     string password;
-    string name;
 
     public:
     User(const string &user, const string &pass);
-    bool verify_pass(const string &pass);
+    bool verifyPassword(const string &pass);
 };
 
 class Admin: public User {
+    public:
+    Admin(const string &user, const string &pass): User(user, pass) {}
+};
+
+class Student: public User {
+    public:
+    Student(const string &user, const string &pass): User(user, pass) {}
 };
 
 

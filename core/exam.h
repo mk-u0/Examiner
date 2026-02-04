@@ -20,10 +20,18 @@ class Question {
     friend class Exam;
 };
 
-class Exam {
-    public:
-    typedef std::vector<bool> Result;
+class Result {
+    private:
+    unsigned exam_id;
+    unsigned student_id;
+    double grade;
 
+    public:
+    Result(unsigned exam_id, unsigned student_id, double grade_id);
+    friend class Exam;
+};
+
+class Exam {
     private:
     unsigned id;
     std::vector<Question> questions;
@@ -31,9 +39,10 @@ class Exam {
 
     public:
     Exam();
-    inline std::size_t size() { return questions.size(); }
+    inline std::size_t size() const { return questions.size(); }
     const Question &question(unsigned i);
-    Result check_answer(const std::vector<unsigned> &answer);
+    std::vector<bool> checkAnswer(const std::vector<unsigned> &answer);
+    Result getResult(const std::vector<unsigned> &answer, unsigned student_id);
 };
 
 

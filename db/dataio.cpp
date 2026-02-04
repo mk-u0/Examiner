@@ -24,10 +24,12 @@ DataIO::~DataIO() {
 
 
 int DataIO::addAdmin(const Admin &a) { /* TODO */ }
-int DataIO::addResult() { /* TODO */ }
+int DataIO::addStudent(const Student &student) { /* TODO */ }
+int DataIO::addResult(const Result &res) { /* TODO */ }
 Admin DataIO::getAdminByUser(const std::string &username) { /* TODO */ }
-int DataIO::getResultByStudentID(unsigned) { /* TODO */ }
-int DataIO::getResultByExamID(unsigned) { /* TODO */ }
+Student getStudentByUser(const std::string &username) { /* TODO */ }
+std::vector<Result> DataIO::getResultByStudentID(unsigned student_id) { /* TODO */ }
+std::vector<Result> DataIO::getResultByExamID(unsigned exam_id) { /* TODO */ }
 
 
 // Garbage to be deleted

@@ -15,8 +15,8 @@ bool AdminApp::OnInit() {
     DataIO io("data.db");
     io.create_table();
 
-    User u{"mk", "12345678"};
-    bool match = u.verify_pass("12345678");
+    Admin admin{"mk", "12345678"};
+    bool match = admin.verifyPassword("12345678");
     LoginFrame *frame = new LoginFrame(match);
     frame->Show();
     return true;

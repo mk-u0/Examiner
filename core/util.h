@@ -4,7 +4,7 @@
 #include <string>
 using std::string;
 
-string pass_hash(const string &pass_raw);
+string hashPassword(const string &pass_raw);
 
 
 

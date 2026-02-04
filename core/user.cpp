@@ -4,9 +4,9 @@
 
 User::User(const string &user, const string &pass) {
     username = user;
-    password = pass_hash(pass);
+    password = hashPassword(pass);
 }
 
-bool User::verify_pass(const string &pass) {
-    return password == pass_hash(pass);
+bool User::verifyPassword(const string &pass) {
+    return password == hashPassword(pass);
 }
