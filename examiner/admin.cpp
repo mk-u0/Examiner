@@ -15,6 +15,16 @@ bool AdminApp::OnInit() {
     DataIO io("data.db");
     io.init();
 
+    
+    int test_rc = io.deleteStudent(999); 
+
+    if (test_rc == SQLITE_DONE || test_rc == SQLITE_OK) {
+        wxLogMessage("Logic Check: Delete command executed successfully!");
+    } else {
+        wxLogMessage("Logic Check: Something is wrong. Error Code: %d", test_rc);
+    }
+    // -------------------------------------------------------
+
     Admin admin("admin", "admin");
     io.addAdmin(admin);
     admin = io.getAdminByUser("admin");

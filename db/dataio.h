@@ -28,6 +28,11 @@ class DataIO {
     Student getStudentByUser(const std::string &username);
     std::vector<Result> getResultByStudentID(unsigned student_id);
     std::vector<Result> getResultByExamID(unsigned exam_id);
+
+    /* Data deletion functions */
+    int deleteAdmin(int id);
+    int deleteStudent(int id);
+    int deleteExam(int id);
     
 };
 

@@ -5,6 +5,7 @@ target_sources(dbio
     dataio.cpp
     dataio_insert.cpp
     dataio_select.cpp
+    dataio_delete.cpp
     PUBLIC
     FILE_SET dbio_headers
     TYPE HEADERS
@@ -15,8 +16,10 @@ target_sources(dbio
     dataio.h
 )
 
+
 target_link_libraries(dbio
     PRIVATE
     core
     SQLite::SQLite3
+    nlohmann_json::nlohmann_json
 )

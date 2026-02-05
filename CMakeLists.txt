@@ -14,6 +14,8 @@ include(${wxWidgets_USE_FILE})
 find_package(nlohmann_json REQUIRED)
 
 find_package(OpenSSL REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
+
 
 # Project subdirectories
 
