@@ -20,5 +20,6 @@ target_sources(core
 target_link_libraries(core
     PRIVATE
     nlohmann_json::nlohmann_json
-    ${OpenSSL_LIBRARIES}
+    OpenSSL::SSL
+    OpenSSL::Crypto
 )

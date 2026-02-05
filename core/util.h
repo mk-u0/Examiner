@@ -2,9 +2,7 @@
 #define _UTIL_H_
 
 #include <string>
-#include <openssl/evp.h> 
-#include <iomanip>
-#include <sstream>
+
 
 std::string hashPassword(const std::string &pass_raw);
 

@@ -15,7 +15,7 @@ bool AdminApp::OnInit() {
     DataIO io("data.db");
     io.init();
 
-    Admin admin{"admin", "admin"};
+    Admin admin("admin", "admin");
     io.addAdmin(admin);
     admin = io.getAdminByUser("admin");
     bool match = admin.verifyPassword("admin");

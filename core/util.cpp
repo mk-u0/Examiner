@@ -1,4 +1,7 @@
 #include <util.h>
+#include <openssl/evp.h> 
+#include <iomanip>
+#include <sstream>
 
 
 using namespace std;
