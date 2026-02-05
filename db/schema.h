@@ -14,7 +14,7 @@ static const char *tables =
 "CREATE TABLE IF NOT EXISTS Exams ("
 "    id INTEGER PRIMARY KEY AUTOINCREMENT,"
 "    title TEXT,"
-"    questions TEXT NOT NULL,"
+"    questions TEXT NOT NULL"
 ");"
 
 "CREATE TABLE IF NOT EXISTS Results ("
