@@ -79,3 +79,29 @@ int DataIO::addResult(const Result &result) {
     return rc;
 }
 
+
+static const char insert_exam[] = 
+    "INSERT INTO Exams (exam_id, duration, body)"
+    "VALUES (?, ?, ?);"
+;
+int DataIO::addExam(const Exam &exam) {
+    int rc;
+    sqlite3_stmt *stmt;
+    rc = sqlite3_prepare_v2(
+        dbcon,
+        insert_exam,
+        sizeof (insert_exam),
+        &stmt,
+        nullptr
+    );
+
+    sqlite3_bind_int(stmt, 1, exam.getID());
+    sqlite3_bind_int(stmt, 2, exam.getDuration());
+    string body = exam.serialize();
+    sqlite3_bind_text(stmt, 3, body.c_str(), body.size(), SQLITE_STATIC);
+
+    rc = sqlite3_step(stmt);
+    rc = sqlite3_finalize(stmt);
+    return rc;
+}
+

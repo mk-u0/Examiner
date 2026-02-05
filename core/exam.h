@@ -5,9 +5,9 @@
 #include <string>
 #include <fstream>
 #include <iostream>
-#include "json.hpp"
-class Question
-{
+#include <nlohmann/json.hpp>
+
+class Question {
 public:
     typedef std::vector<std::string> Choice;
 
@@ -19,14 +19,23 @@ private:
 
 public:
     NLOHMANN_DEFINE_TYPE_INTRUSIVE(Question, id, text, choice, correct)
-    
-    inline unsigned get_correct() { return correct; }
+
+    /* Getters */
+    inline unsigned getID() const { return id; }
+    inline const std::string &getText() const { return text; }
+    inline const Choice &getChoice() const { return choice; }
+    inline unsigned getCorrect() const { return correct; }
+
+    /* Setters */
+    inline void setID(unsigned id) { this->id = id; }
+    inline void setText(const std::string &text) { this->text = text; }
+    inline void setChoice(const Choice &choice) { this->choice = choice; }
+    inline void setCorrect(unsigned correct) { this->correct = correct; }
 
     friend class Exam;
 };
 
-class Result
-{
+class Result {
 private:
     unsigned exam_id;
     unsigned student_id;
@@ -42,8 +51,7 @@ public:
     friend class Exam;
 };
 
-class Exam
-{
+class Exam {
 private:
     unsigned id;
     std::vector<Question> questions;
@@ -51,14 +59,25 @@ private:
 
 public:
     Exam() {}
+
     inline std::size_t size() const { return questions.size(); }
-    const Question &question(unsigned i);
+    inline unsigned getID() const { return id; }
+    inline unsigned getDuration() const { return duration; }
+
+    unsigned findIndexByID(unsigned id) const;
+    const Question &getQuestion(unsigned i) const;
+    const Question &getQuestionByID(unsigned id) const;
+    void addQuestion(const Question &q);
+    void removeQuestion(unsigned i);
+    void removeQuestionByID(unsigned id);
+    void modifyQuestion(unsigned i, const Question &q);
+    void modifyQuestionByID(unsigned id, const Question &q);
+
     std::vector<bool> checkAnswer(const std::vector<unsigned> &answer);
     Result getResult(const std::vector<unsigned> &answer, unsigned student_id);
-    Result check_answer(const std::vector<unsigned> &answer);
 
-    std::string serialize();
-    void deserialize(const std::string &filename);
+    std::string serialize() const;
+    void deserialize(const std::string &text);
 };
 
 #endif

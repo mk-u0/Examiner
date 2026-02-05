@@ -19,5 +19,4 @@ target_link_libraries(dbio
     PRIVATE
     core
     SQLite::SQLite3
-#    fmt::fmt
 )

@@ -17,7 +17,8 @@ class DataIO {
     /* Data insertion functions */
     int addAdmin(const Admin &admin);
     int addStudent(const Student &student);
-    int addResult(const Result &res);
+    int addResult(const Result &result);
+    int addExam(const Exam &exam);
 
     /* Data selection functions */
     Admin getAdminByUser(const std::string &username);

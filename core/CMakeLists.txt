@@ -16,3 +16,8 @@ target_sources(core
     util.h
     exam.h
 )
+
+target_link_libraries(core
+    PRIVATE
+    nlohmann_json::nlohmann_json
+)
