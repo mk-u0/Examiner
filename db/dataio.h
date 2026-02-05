@@ -33,7 +33,7 @@ class DataIO {
     int deleteAdmin(int id);
     int deleteStudent(int id);
     int deleteExam(int id);
-    
+
 };
 
 #endif /* _DATAIO_H_ */

@@ -9,12 +9,13 @@ Result::Result(unsigned exam_id, unsigned student_id, double grade) {
 }
 
 
-unsigned Exam::findIndexByID(unsigned id) const {
+int Exam::findIndexByID(unsigned id) const {
     for (unsigned i = 0; i < size(); i++) {
         if (questions[i].getID() == id) {
             return i;
         }
     }
+    return -1;
 }
 
 const Question &Exam::getQuestion(unsigned i) const {

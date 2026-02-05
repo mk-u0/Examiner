@@ -64,7 +64,7 @@ public:
     inline unsigned getID() const { return id; }
     inline unsigned getDuration() const { return duration; }
 
-    unsigned findIndexByID(unsigned id) const;
+    int findIndexByID(unsigned id) const;
     const Question &getQuestion(unsigned i) const;
     const Question &getQuestionByID(unsigned id) const;
     void addQuestion(const Question &q);

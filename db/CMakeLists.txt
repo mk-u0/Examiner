@@ -17,10 +17,8 @@ target_sources(dbio
     dataio.h
 )
 
-
 target_link_libraries(dbio
     PRIVATE
     core
     SQLite::SQLite3
-    nlohmann_json::nlohmann_json
 )
