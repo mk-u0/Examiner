@@ -1,4 +1,5 @@
 #include <dataio.h>
+using std::string;
 
 
 static  const char insert_admin[] =

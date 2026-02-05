@@ -1,13 +1,21 @@
 #ifndef _DATAIO_H_
 #define _DATAIO_H_
 
+#include <vector>
+#include <string>
+#include <sqlite3.h>
+#include <user.h>
+#include <exam.h>
+
 class DataIO {
-<<<<<<< HEAD
     private:
     sqlite3 *dbcon;
     public:
     DataIO(const std::string &path);
     ~DataIO();
+
+    /* Define the database tables */
+    void init();
 
     /* Data insertion functions */
     int addAdmin(const Admin &admin);
@@ -20,14 +28,7 @@ class DataIO {
     Student getStudentByUser(const std::string &username);
     std::vector<Result> getResultByStudentID(unsigned student_id);
     std::vector<Result> getResultByExamID(unsigned exam_id);
-
-    // Dummy function to be removed later
-    void create_table();
-=======
-public:
-    void init();
     
->>>>>>> 8f23868 (final database task)
 };
 
 #endif /* _DATAIO_H_ */

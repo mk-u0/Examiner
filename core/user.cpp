@@ -2,11 +2,12 @@
 #include <util.h>
 
 
-User::User(const string &user, const string &pass) {
+User::User(const std::string &user, const std::string &pass, unsigned id) {
     username = user;
     password = hashPassword(pass);
+    this->id = id;
 }
 
-bool User::verifyPassword(const string &pass) const {
+bool User::verifyPassword(const std::string &pass) const {
     return password == hashPassword(pass);
 }

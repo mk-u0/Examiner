@@ -2,33 +2,43 @@
 #define _USER_H_
 
 #include <string>
-using std::string;
 
 
 class User {
     protected:
     unsigned id;
-    string username;
-    string password;
+    std::string username;
+    std::string password;
 
     public:
-    User(const string &user, const string &pass);
+    User() {};
+    User(const std::string &user, const std::string &pass, unsigned id = 0);
 
+    /* Getters */
     inline unsigned getID() const { return id; }
-    inline const string &getUsername() const { return username; }
-    inline const string &getPassword() const { return password; }
+    inline const std::string &getUsername() const { return username; }
+    inline const std::string &getPassword() const { return password; }
 
-    bool verifyPassword(const string &pass) const;
+    /* Setters */
+    inline void setID(unsigned id) { this->id = id; }
+    inline void setUsername(const std::string &user) { username = user; }
+    inline void setPassword(const std::string &pass) { password = pass; }
+
+    bool verifyPassword(const std::string &pass) const;
 };
 
 class Admin: public User {
     public:
-    Admin(const string &user, const string &pass): User(user, pass) {}
+    Admin() {}
+    Admin(const std::string &user, const std::string &pass, unsigned id = 0):
+    User(user, pass, id) {}
 };
 
 class Student: public User {
     public:
-    Student(const string &user, const string &pass): User(user, pass) {}
+    Student() {}
+    Student(const std::string &user, const std::string &pass, unsigned id = 0):
+    User(user, pass, id) {}
 };
 
 

@@ -1,34 +1,25 @@
 #include <user.h>
 #include <dataio.h>
 #include <wx/wx.h>
+#include <login.h>
 
-class MyApp : public wxApp {
+class AdminApp : public wxApp {
 public:
     bool OnInit() override;
 };
  
 // This defines the equivalent of main() for the current platform.
-wxIMPLEMENT_APP(MyApp);
+wxIMPLEMENT_APP(AdminApp);
 
-class MyFrame : public wxFrame {
-public:
-    MyFrame(bool show);
-};
-
-bool MyApp::OnInit() {
-    DataIO io;
+bool AdminApp::OnInit() {
+    DataIO io("data.db");
     io.init();
-    
-    User u{"mk", "12345678"};
-    bool match = u.verify_pass("12345678");
-    MyFrame *frame = new MyFrame(match);
+
+    Admin admin{"admin", "admin"};
+    io.addAdmin(admin);
+    admin = io.getAdminByUser("admin");
+    bool match = admin.verifyPassword("admin");
+    LoginFrame *frame = new LoginFrame(match);
     frame->Show();
     return true;
-}
-
-MyFrame::MyFrame(bool show) : wxFrame(nullptr, wxID_ANY, "Hello World") {
-    if (show) {
-        CreateStatusBar();
-        SetStatusText("Welcome to wxWidgets!");
-    }
 }
