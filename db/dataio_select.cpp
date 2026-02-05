@@ -71,6 +71,65 @@ Student DataIO::getStudentByUser(const string &username) {
     return student;
 }
 
-std::vector<Result> DataIO::getResultByStudentID(unsigned student_id) { /* TODO */ }
-std::vector<Result> DataIO::getResultByExamID(unsigned exam_id) { /* TODO */ }
+
+static const char select_result_student[] =
+    "SELECT exam_id, grade FROM Results "
+    "WHERE student_id=?;"
+;
+std::vector<Result> DataIO::getResultByStudentID(unsigned student_id) {
+    int rc;
+    sqlite3_stmt *stmt;
+    rc = sqlite3_prepare_v2(
+        dbcon,
+        select_result_student,
+        sizeof (select_result_student),
+        &stmt,
+        nullptr
+    );
+
+    rc = sqlite3_bind_int(stmt, 1, student_id);
+
+    std::vector<Result> results;
+    unsigned exam_id;
+    double grade;
+    while (sqlite3_step(stmt) != SQLITE_DONE) {
+        exam_id = sqlite3_column_int(stmt, 0);
+        grade = sqlite3_column_double(stmt, 1);
+        results.push_back(Result(exam_id, student_id, grade));
+    }
+
+    sqlite3_finalize(stmt);
+    return results;
+}
+
+
+static const char select_result_exam[] =
+    "SELECT student_id, grade FROM Results "
+    "WHERE exam_id=?;"
+;
+std::vector<Result> DataIO::getResultByExamID(unsigned exam_id) {
+    int rc;
+    sqlite3_stmt *stmt;
+    rc = sqlite3_prepare_v2(
+        dbcon,
+        select_result_exam,
+        sizeof (select_result_exam),
+        &stmt,
+        nullptr
+    );
+
+    rc = sqlite3_bind_int(stmt, 1, exam_id);
+
+    std::vector<Result> results;
+    unsigned student_id;
+    double grade;
+    while (sqlite3_step(stmt) != SQLITE_DONE) {
+        student_id = sqlite3_column_int(stmt, 0);
+        grade = sqlite3_column_double(stmt, 1);
+        results.push_back(Result(exam_id, student_id, grade));
+    }
+
+    sqlite3_finalize(stmt);
+    return results;
+}
 
