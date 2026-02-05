@@ -13,6 +13,8 @@ include(${wxWidgets_USE_FILE})
 
 find_package(nlohmann_json REQUIRED)
 
+find_package(OpenSSL REQUIRED)
+
 # Project subdirectories
 
 add_subdirectory(examiner)
