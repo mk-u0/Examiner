@@ -4,6 +4,13 @@ project(examiner)
 
 set(CMAKE_CXX_STANDARD 11)
 
+option(BUILD_TESTING "Enable testing and build tests" ON)
+
+if (BUILD_TESTING)
+    enable_testing()
+    add_subdirectory(test)
+endif()
+
 # External package definitions
 
 find_package(SQLite3 REQUIRED)
