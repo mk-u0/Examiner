@@ -28,7 +28,8 @@ int main() {
     rc = rc || (updated_admin.getPassword() != newPass);
 
     if (rc == 0) std::cout << "Update Admin Test: PASSED\n";
-    
+
+    db.~DataIO();
     std::remove(TEST_DB); 
     return rc;
 }
