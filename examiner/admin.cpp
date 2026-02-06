@@ -7,7 +7,8 @@ class AdminApp : public wxApp {
 public:
     bool OnInit() override;
 };
- 
+void Auth(const char* email, const char* pass) {}
+
 // This defines the equivalent of main() for the current platform.
 wxIMPLEMENT_APP(AdminApp);
 
@@ -29,7 +30,9 @@ bool AdminApp::OnInit() {
     io.addAdmin(admin);
     admin = io.getAdminByUser("admin");
     bool match = admin.verifyPassword("admin");
-    LoginFrame *frame = new LoginFrame(match);
+    LoginFrame *frame = new LoginFrame();
+    frame->setCallback(Auth);
     frame->Show();
     return true;
 }
+

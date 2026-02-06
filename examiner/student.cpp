@@ -19,7 +19,7 @@ bool StudentApp::OnInit() {
     io.addStudent(stu);
     stu = io.getStudentByUser("mk");
     bool match = stu.verifyPassword("12345678");
-    LoginFrame *frame = new LoginFrame(match);
+    LoginFrame *frame = new LoginFrame();
     frame->Show();
     return true;
 }
