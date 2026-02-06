@@ -61,4 +61,3 @@ static int test_student() {
     rc = rc || student.getPassword() != r_student.getPassword();
     return rc;
 }
-

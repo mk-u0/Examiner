@@ -6,6 +6,7 @@ target_sources(dbio
     dataio_insert.cpp
     dataio_select.cpp
     dataio_delete.cpp
+    dataio_update.cpp
     schema.h
     PUBLIC
     FILE_SET dbio_headers

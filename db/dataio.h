@@ -34,6 +34,10 @@ class DataIO {
     int deleteStudent(int id);
     int deleteExam(int id);
 
+    /* Data update functions */
+    int updateAdminPassword(int id, const std::string &newPassword);
+    int updateStudentPassword(int id, const std::string &newPassword);
+
 };
 
 #endif /* _DATAIO_H_ */
