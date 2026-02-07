@@ -1,19 +1,23 @@
 add_library(ui)
+
 target_sources(ui
     PRIVATE
-    # insert implementation files (.cpp) under this comment
     login.cpp
+    adminui.cpp
+    studentui.cpp
     PUBLIC
     FILE_SET ui_headers
     TYPE HEADERS
     BASE_DIRS
         .
     FILES
-    # insert header files under this comment
     login.h
+    adminui.h
+    studentui.h
 )
 
 target_link_libraries(ui
     PRIVATE
+    core
     ${wxWidgets_LIBRARIES}
 )

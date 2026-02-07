@@ -13,6 +13,7 @@ endif()
 
 # External package definitions
 
+
 find_package(SQLite3 REQUIRED)
 
 find_package(wxWidgets REQUIRED COMPONENTS core base gl)
@@ -21,6 +22,8 @@ include(${wxWidgets_USE_FILE})
 find_package(nlohmann_json REQUIRED)
 
 find_package(OpenSSL REQUIRED)
+
+
 
 
 # Project subdirectories
