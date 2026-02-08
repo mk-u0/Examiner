@@ -13,7 +13,8 @@ static const char *tables =
 
 "CREATE TABLE IF NOT EXISTS Exams ("
 "    id INTEGER PRIMARY KEY AUTOINCREMENT,"
-"    title TEXT,"
+"    title TEXT UNIQUE,"
+"    duration INTEGER,"
 "    questions TEXT NOT NULL"
 ");"
 
@@ -24,5 +25,6 @@ static const char *tables =
 "    grade REAL NOT NULL,"
 
 "    FOREIGN KEY (exam_id) REFERENCES Exams(id) ON DELETE CASCADE"
+"    FOREIGN KEY (student_id) REFERENCES Students(id) ON CASCADE"
 ");"
 ;

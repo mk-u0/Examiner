@@ -12,40 +12,40 @@ public:
     typedef std::vector<std::string> Choice;
 
 private:
-    unsigned id;
+    int id;
     std::string text;
     Choice choice;
-    unsigned correct;
+    int correct;
 
 public:
     NLOHMANN_DEFINE_TYPE_INTRUSIVE(Question, id, text, choice, correct)
 
     /* Getters */
-    inline unsigned getID() const { return id; }
+    inline int getID() const { return id; }
     inline const std::string &getText() const { return text; }
     inline const Choice &getChoice() const { return choice; }
-    inline unsigned getCorrect() const { return correct; }
+    inline int getCorrect() const { return correct; }
 
     /* Setters */
-    inline void setID(unsigned id) { this->id = id; }
+    inline void setID(int id) { this->id = id; }
     inline void setText(const std::string &text) { this->text = text; }
     inline void setChoice(const Choice &choice) { this->choice = choice; }
-    inline void setCorrect(unsigned correct) { this->correct = correct; }
+    inline void setCorrect(int correct) { this->correct = correct; }
 
     friend class Exam;
 };
 
 class Result {
 private:
-    unsigned exam_id;
-    unsigned student_id;
+    int exam_id;
+    int student_id;
     double grade;
 
 public:
-    Result(unsigned exam_id, unsigned student_id, double grade);
+    Result(int exam_id, int student_id, double grade);
 
-    inline unsigned getExamID() const { return exam_id; }
-    inline unsigned getStudentID() const { return student_id; }
+    inline int getExamID() const { return exam_id; }
+    inline int getStudentID() const { return student_id; }
     inline double getGrade() const { return grade; }
 
     friend class Exam;
@@ -53,28 +53,38 @@ public:
 
 class Exam {
 private:
-    unsigned id;
+    int id;
     std::vector<Question> questions;
-    unsigned duration;
+    int duration;
+    std::string title;
 
 public:
     Exam() {}
 
     inline std::size_t size() const { return questions.size(); }
-    inline unsigned getID() const { return id; }
-    inline unsigned getDuration() const { return duration; }
 
-    int findIndexByID(unsigned id) const;
-    const Question &getQuestion(unsigned i) const;
-    const Question &getQuestionByID(unsigned id) const;
+    /* Getters */
+    inline int getID() const { return id; }
+    inline int getDuration() const { return duration; }
+    inline const std::string &getTitle() const { return title; }
+
+    /* Setters */
+    inline void setID(int id) { this->id = id; }
+    inline void setDuration(int duration) { this->duration = duration; }
+    inline void setTitle(const std::string &title) { this->title = title; }
+
+    /* Questions Functions */
+    int findIndexByID(int id) const;
+    const Question &getQuestion(int i) const;
+    const Question &getQuestionByID(int id) const;
     void addQuestion(const Question &q);
-    void removeQuestion(unsigned i);
-    void removeQuestionByID(unsigned id);
-    void modifyQuestion(unsigned i, const Question &q);
-    void modifyQuestionByID(unsigned id, const Question &q);
+    void removeQuestion(int i);
+    void removeQuestionByID(int id);
+    void modifyQuestion(int i, const Question &q);
+    void modifyQuestionByID(int id, const Question &q);
 
-    std::vector<bool> checkAnswer(const std::vector<unsigned> &answer);
-    Result getResult(const std::vector<unsigned> &answer, unsigned student_id);
+    std::vector<bool> checkAnswer(const std::vector<int> &answer);
+    Result getResult(const std::vector<int> &answer, int student_id);
 
     std::string serialize() const;
     void deserialize(const std::string &text);

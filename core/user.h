@@ -6,21 +6,21 @@
 
 class User {
     protected:
-    unsigned id;
+    int id;
     std::string username;
     std::string password;
 
     public:
     User() {};
-    User(const std::string &user, const std::string &pass, unsigned id = 0);
+    User(const std::string &user, const std::string &pass, int id = -1);
 
     /* Getters */
-    inline unsigned getID() const { return id; }
+    inline int getID() const { return id; }
     inline const std::string &getUsername() const { return username; }
     inline const std::string &getPassword() const { return password; }
 
     /* Setters */
-    inline void setID(unsigned id) { this->id = id; }
+    inline void setID(int id) { this->id = id; }
     inline void setUsername(const std::string &user) { username = user; }
     inline void setPassword(const std::string &pass) { password = pass; }
 
@@ -30,14 +30,14 @@ class User {
 class Admin: public User {
     public:
     Admin() {}
-    Admin(const std::string &user, const std::string &pass, unsigned id = 0):
+    Admin(const std::string &user, const std::string &pass, int id = 0):
     User(user, pass, id) {}
 };
 
 class Student: public User {
     public:
     Student() {}
-    Student(const std::string &user, const std::string &pass, unsigned id = 0):
+    Student(const std::string &user, const std::string &pass, int id = 0):
     User(user, pass, id) {}
 };
 

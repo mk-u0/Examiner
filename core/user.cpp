@@ -2,7 +2,7 @@
 #include <util.h>
 
 
-User::User(const std::string &user, const std::string &pass, unsigned id) {
+User::User(const std::string &user, const std::string &pass, int id) {
     username = user;
     password = hashPassword(pass);
     this->id = id;

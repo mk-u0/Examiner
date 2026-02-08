@@ -82,8 +82,8 @@ int DataIO::addResult(const Result &result) {
 
 
 static const char insert_exam[] = 
-    "INSERT INTO Exams (exam_id, duration, body)"
-    "VALUES (?, ?, ?);"
+    "INSERT INTO Exams (id, duration, title, questions)"
+    "VALUES (?, ?, ?, ?);"
 ;
 int DataIO::addExam(const Exam &exam) {
     int rc;
@@ -98,8 +98,9 @@ int DataIO::addExam(const Exam &exam) {
 
     sqlite3_bind_int(stmt, 1, exam.getID());
     sqlite3_bind_int(stmt, 2, exam.getDuration());
+    sqlite3_bind_text(stmt, 3, exam.getTitle().c_str(), exam.getTitle().size(), SQLITE_STATIC);
     string body = exam.serialize();
-    sqlite3_bind_text(stmt, 3, body.c_str(), body.size(), SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 4, body.c_str(), body.size(), SQLITE_STATIC);
 
     rc = sqlite3_step(stmt);
     rc = sqlite3_finalize(stmt);

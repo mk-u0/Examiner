@@ -21,17 +21,17 @@ Admin DataIO::getAdminByUser(const string &username) {
     rc = sqlite3_bind_text(stmt, 1, username.c_str(), username.size(), SQLITE_STATIC);
     if (rc != SQLITE_OK) throw std::runtime_error("sqlite3_bind: " + std::to_string(rc));
 
-    Admin admin;
     rc = sqlite3_step(stmt);
-    if (rc == SQLITE_DONE) {
-        admin.setID(0);
-        admin.setUsername("");
-        admin.setPassword("");
-    }
-    else if (rc == SQLITE_ROW) {
+    Admin admin;
+    if (rc == SQLITE_ROW) {
         admin.setID(sqlite3_column_int(stmt, 0));
         admin.setUsername((const char *)sqlite3_column_text(stmt, 1));
         admin.setPassword((const char *)sqlite3_column_text(stmt, 2));
+    }
+    else {
+        admin.setID(-1);
+        admin.setUsername("");
+        admin.setPassword("");
     }
     sqlite3_finalize(stmt);
     return admin;
@@ -55,17 +55,17 @@ Student DataIO::getStudentByUser(const string &username) {
 
     sqlite3_bind_text(stmt, 1, username.c_str(), username.size(), SQLITE_STATIC);
 
-    Student student;
     rc = sqlite3_step(stmt);
-    if (rc == SQLITE_DONE) {
-        student.setID(0);
-        student.setUsername("");
-        student.setPassword("");
-    }
-    else {
+    Student student;
+    if (rc == SQLITE_ROW) {
         student.setID(sqlite3_column_int(stmt, 0));
         student.setUsername((const char *)sqlite3_column_text(stmt, 1));
         student.setPassword((const char *)sqlite3_column_text(stmt, 2));
+    }
+    else {
+        student.setID(-1);
+        student.setUsername("");
+        student.setPassword("");
     }
     sqlite3_finalize(stmt);
     return student;
@@ -76,7 +76,7 @@ static const char select_result_student[] =
     "SELECT exam_id, grade FROM Results "
     "WHERE student_id=?;"
 ;
-std::vector<Result> DataIO::getResultByStudentID(unsigned student_id) {
+std::vector<Result> DataIO::getResultByStudentID(int student_id) {
     int rc;
     sqlite3_stmt *stmt;
     rc = sqlite3_prepare_v2(
@@ -107,7 +107,7 @@ static const char select_result_exam[] =
     "SELECT student_id, grade FROM Results "
     "WHERE exam_id=?;"
 ;
-std::vector<Result> DataIO::getResultByExamID(unsigned exam_id) {
+std::vector<Result> DataIO::getResultByExamID(int exam_id) {
     int rc;
     sqlite3_stmt *stmt;
     rc = sqlite3_prepare_v2(
@@ -131,5 +131,75 @@ std::vector<Result> DataIO::getResultByExamID(unsigned exam_id) {
 
     sqlite3_finalize(stmt);
     return results;
+}
+
+
+static const char select_exam_id[] =
+    "SELECT title, duration, questions FROM Exams "
+    "WHERE id=?"
+;
+Exam DataIO::getExamById(int id) {
+    int rc;
+    sqlite3_stmt *stmt;
+    rc = sqlite3_prepare_v2(
+        dbcon,
+        select_exam_id,
+        sizeof (select_exam_id),
+        &stmt,
+        nullptr
+    );
+
+    rc = sqlite3_bind_int(stmt, 1, id);
+
+    rc = sqlite3_step(stmt);
+    Exam exam;
+    if (rc == SQLITE_ROW) {
+        exam.deserialize((const char *)sqlite3_column_text(stmt, 2));
+        exam.setID(id);
+        exam.setTitle((const char *)sqlite3_column_text(stmt, 0));
+        exam.setDuration(sqlite3_column_int(stmt, 1));
+    }
+    else {
+        exam.setID(-1);
+        exam.setTitle("");
+        exam.setDuration(-1);
+    }
+    sqlite3_finalize(stmt);
+    return exam;
+}
+
+
+static const char select_exam_title[] =
+    "SELECT id, duration, questions FROM Exams "
+    "WHERE title=?"
+;
+Exam DataIO::getExamByTitle(const string &title) {
+    int rc;
+    sqlite3_stmt *stmt;
+    rc = sqlite3_prepare_v2(
+        dbcon,
+        select_exam_title,
+        sizeof (select_exam_title),
+        &stmt,
+        nullptr
+    );
+
+    rc = sqlite3_bind_text(stmt, 1, title.c_str(), title.size(), SQLITE_STATIC);
+
+    rc = sqlite3_step(stmt);
+    Exam exam;
+    if (rc == SQLITE_ROW) {
+        exam.deserialize((const char *)sqlite3_column_text(stmt, 2));
+        exam.setID(sqlite3_column_int(stmt, 0));
+        exam.setTitle(title);
+        exam.setDuration(sqlite3_column_int(stmt, 1));
+    }
+    else {
+        exam.setID(-1);
+        exam.setTitle("");
+        exam.setDuration(-1);
+    }
+    sqlite3_finalize(stmt);
+    return exam;
 }
 
