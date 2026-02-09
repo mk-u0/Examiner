@@ -39,7 +39,7 @@ class DataIO {
     /* Data update functions */
     int updateAdminPassword(int id, const std::string &newPassword);
     int updateStudentPassword(int id, const std::string &newPassword);
-
+    int updateExamByID(int id, const Exam &exam);
 };
 
 #endif /* _DATAIO_H_ */
