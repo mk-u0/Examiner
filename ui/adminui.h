@@ -4,6 +4,7 @@
 #include <wx/wx.h>
 #include <wx/notebook.h>
 #include <wx/scrolwin.h>
+#include <wx/listctrl.h>
 #include <vector>
 #include <exam.h>
 
@@ -37,6 +38,7 @@ private:
     void DeleteQuestionFromDatabase(int index);
 
     wxPanel *CreateDashboardPage();
+    wxPanel* CreateResultsPage();
 
     wxString m_username;
     std::vector<Question> m_questions;

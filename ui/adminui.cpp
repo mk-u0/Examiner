@@ -37,6 +37,7 @@ AdminFrame::AdminFrame(const wxString &username)
 
     m_notebook = new wxNotebook(mainPanel, wxID_ANY);
     m_notebook->AddPage(CreateDashboardPage(), "Dashboard");
+    m_notebook->AddPage(CreateResultsPage(), "View Results");
     mainSizer->Add(m_notebook, 1, wxEXPAND | wxALL, 5);
 
     mainPanel->SetSizer(mainSizer);
@@ -295,4 +296,31 @@ void AdminFrame::OnPageNext(wxCommandEvent &event)
         RefreshQuestionsTable();
     }
 }
+wxPanel *AdminFrame::CreateResultsPage()
+{
+    wxPanel *panel = new wxPanel(m_notebook);
+    panel->SetBackgroundColour(wxColour(70, 70, 70));
+    wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
+
+    wxStaticText *titleText = new wxStaticText(panel, wxID_ANY, "Students Results");
+    titleText->SetForegroundColour(*wxWHITE);
+    titleText->SetFont(wxFont(16, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
+    sizer->Add(titleText, 0, wxALL, 20);
+
+    wxListCtrl *examListCtrl = new wxListCtrl(panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 
+                                              wxLC_REPORT | wxBORDER_SUNKEN);
+    
+    examListCtrl->SetBackgroundColour(wxColour(50, 50, 50));
+    examListCtrl->SetForegroundColour(*wxWHITE);
+
+    examListCtrl->InsertColumn(0, "Student ID", wxLIST_FORMAT_LEFT, 80);
+    examListCtrl->InsertColumn(1, "Exam Title", wxLIST_FORMAT_LEFT, 350);
+    examListCtrl->InsertColumn(2, "Grade", wxLIST_FORMAT_CENTER, 150);
+
+    sizer->Add(examListCtrl, 1, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 20);
+
+    panel->SetSizer(sizer);
+    return panel;
+}
+
 AdminFrame::~AdminFrame() {}
