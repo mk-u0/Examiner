@@ -21,7 +21,7 @@ LoginFrame::LoginFrame()
     subtitle->SetForegroundColour(wxColour(100, 130, 180));
     mainSizer->Add(subtitle, 0, wxALIGN_CENTER | wxTOP, 10);
 
-    wxStaticText *emailLabel = new wxStaticText(panel, wxID_ANY, "Email:");
+    wxStaticText *emailLabel = new wxStaticText(panel, wxID_ANY, "User name:");
     emailLabel->SetForegroundColour(*wxWHITE);
     mainSizer->Add(emailLabel, 0, wxLEFT | wxTOP, 75);
 
@@ -40,11 +40,7 @@ LoginFrame::LoginFrame()
     mainSizer->AddStretchSpacer(1);
 
     wxButton *loginBtn = new wxButton(panel, wxID_ANY, "Login", wxDefaultPosition, wxSize(150, 45), wxBORDER_NONE);
-    loginBtn->Bind(wxEVT_ENTER_WINDOW, [=](wxMouseEvent &event)
-                   { loginBtn->SetCursor(wxCursor(wxCURSOR_HAND)); });
-
-    loginBtn->Bind(wxEVT_LEAVE_WINDOW, [=](wxMouseEvent &event)
-                   { loginBtn->SetCursor(wxCursor(wxCURSOR_ARROW)); });
+    loginBtn->SetCursor(wxCursor(wxCURSOR_HAND));
     loginBtn->SetBackgroundColour(wxColour(30, 144, 255));
     loginBtn->SetForegroundColour(*wxWHITE);
     loginBtn->SetFont(wxFont(12, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));

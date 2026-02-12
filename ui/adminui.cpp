@@ -1,13 +1,8 @@
 #include "adminui.h"
 #include <wx/msgdlg.h>
 
-wxBEGIN_EVENT_TABLE(AdminFrame, wxFrame)
-    EVT_MENU(wxID_EXIT, AdminFrame::OnExit)
-        wxEND_EVENT_TABLE()
-
-            AdminFrame::AdminFrame(const wxString &username)
-    : wxFrame(nullptr, wxID_ANY, "Exam Dashboard - " + username,
-              wxDefaultPosition, wxSize(900, 600)),
+AdminFrame::AdminFrame(const wxString &username)
+    : wxFrame(nullptr, wxID_ANY, "Exam Dashboard - " + username, wxDefaultPosition, wxSize(900, 600)),
       m_username(username),
       m_questionsPanel(nullptr),
       m_questionsTableSizer(nullptr),
@@ -62,7 +57,7 @@ wxPanel *AdminFrame::CreateDashboardPage()
     sizer->Add(addBtn, 0, wxALL, 20);
 
     m_questionsPanel = new wxScrolledWindow(panel, wxID_ANY);
-    m_questionsPanel->SetScrollRate(0, 20);
+    m_questionsPanel->SetScrollRate(20, 20);
     m_questionsTableSizer = new wxBoxSizer(wxVERTICAL);
     m_questionsPanel->SetSizer(m_questionsTableSizer);
     sizer->Add(m_questionsPanel, 1, wxEXPAND | wxLEFT | wxRIGHT, 20);
@@ -107,8 +102,11 @@ void AdminFrame::RefreshQuestionsTable()
         row->SetBackgroundColour(i % 2 == 0 ? wxColour(55, 55, 55) : wxColour(65, 65, 65));
 
         wxBoxSizer *rowSizer = new wxBoxSizer(wxHORIZONTAL);
-        rowSizer->Add(new wxStaticText(row, wxID_ANY, wxString::Format("%d- %s", i + 1, m_questions[i].getText())), 1, wxALL | wxCENTER, 10);
+        wxStaticText *qText = new wxStaticText(row, wxID_ANY, wxString::Format("%d- %s", i + 1, m_questions[i].getText()));
+        qText->SetForegroundColour(*wxWHITE);
+        qText->Wrap(600);
 
+        rowSizer->Add(qText, 1, wxALL | wxALIGN_CENTER_VERTICAL, 10);
         wxButton *e = new wxButton(row, wxID_ANY, "Edit", wxDefaultPosition, wxSize(60, 25));
         wxButton *d = new wxButton(row, wxID_ANY, "Delete", wxDefaultPosition, wxSize(60, 25));
         e->Bind(wxEVT_BUTTON, [this, i](wxCommandEvent &)
@@ -127,7 +125,6 @@ void AdminFrame::RefreshQuestionsTable()
     m_questionsPanel->Layout();
     m_questionsPanel->FitInside();
 }
-void AdminFrame::OnExit(wxCommandEvent &event) { Close(); }
 void AdminFrame::LoadQuestionsFromDatabase() { m_questions.clear(); }
 void AdminFrame::SaveQuestionToDatabase(const Question &q) {}
 void AdminFrame::UpdateQuestionInDatabase(int index, const Question &q) {}
@@ -143,7 +140,7 @@ AddQuestionDialog::AddQuestionDialog(wxWindow *parent, const wxString &title)
     labelQ->SetForegroundColour(*wxWHITE);
     mainSizer->Add(labelQ, 0, wxALL, 10);
 
-    qInput = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxSize(-1, 80), wxTE_MULTILINE);
+    qInput = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxSize(0, 80), wxTE_MULTILINE);
     mainSizer->Add(qInput, 0, wxEXPAND | wxLEFT | wxRIGHT, 10);
 
     wxFlexGridSizer *gridSizer = new wxFlexGridSizer(2, 10, 10);
@@ -179,27 +176,55 @@ AddQuestionDialog::AddQuestionDialog(wxWindow *parent, const wxString &title)
 void AdminFrame::OnAddQuestions(wxCommandEvent &event)
 {
     AddQuestionDialog dlg(this);
-    if (dlg.ShowModal() == wxID_OK)
+
+    while (true)
     {
-        Question q;
-        q.setText(dlg.qInput->GetValue().ToStdString());
-        Question::Choice choices;
+        if (dlg.ShowModal() != wxID_OK)
+            return;
+
+        wxString questionText = dlg.qInput->GetValue();
+        if (questionText.IsEmpty())
+        {
+            wxMessageBox("Question text cannot be empty!", "Error", wxOK | wxICON_ERROR);
+            continue;
+        }
+
+        bool emptyChoice = false;
         for (int i = 0; i < 4; i++)
-            choices.push_back(dlg.choices[i]->GetValue().ToStdString());
-        q.setChoice(choices);
-        q.setCorrect(dlg.correctAns->GetSelection());
-        q.setID(m_questions.size() + 1);
+        {
+            if (dlg.choices[i]->GetValue().IsEmpty())
+            {
+                emptyChoice = true;
+                break;
+            }
+        }
+        if (emptyChoice)
+        {
+            wxMessageBox("All choices must be filled!", "Error", wxOK | wxICON_ERROR);
+            continue;
+        }
 
-        m_questions.push_back(q);
-        SaveQuestionToDatabase(q);
-
-        int total = (int)m_questions.size();
-        int totalPages = (total + QUESTIONS_PER_PAGE - 1) / QUESTIONS_PER_PAGE;
-
-        m_currentPage = totalPages;
-
-        RefreshQuestionsTable();
+        break;
     }
+
+    Question q;
+    q.setText(dlg.qInput->GetValue().ToStdString());
+
+    Question::Choice choices;
+    for (int i = 0; i < 4; i++)
+        choices.push_back(dlg.choices[i]->GetValue().ToStdString());
+    q.setChoice(choices);
+    q.setCorrect(dlg.correctAns->GetSelection());
+    q.setID(m_questions.size() + 1);
+
+    m_questions.push_back(q);
+    SaveQuestionToDatabase(q);
+
+    int total = (int)m_questions.size();
+    int totalPages = (total + QUESTIONS_PER_PAGE - 1) / QUESTIONS_PER_PAGE;
+    m_currentPage = totalPages;
+
+    RefreshQuestionsTable();
 }
 
 void AdminFrame::OnEditQuestionAtIndex(int index)
