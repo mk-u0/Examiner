@@ -37,3 +37,21 @@ add_test(
     NAME update_admin_password
     COMMAND test_update
 )
+
+# Exam integration test
+add_executable(exam_integration_test)
+target_sources(exam_integration_test
+    PRIVATE
+    exam_integration_test.cpp
+)
+
+target_link_libraries(exam_integration_test
+    PRIVATE
+    dbio
+    core
+)
+
+add_test(
+    NAME exam_integration_test
+    COMMAND exam_integration_test
+)
