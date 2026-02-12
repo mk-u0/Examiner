@@ -37,3 +37,24 @@ int DataIO::updateStudentPassword(int id, const string &newPassword) {
     
     return (rc == SQLITE_DONE) ? SQLITE_OK : rc;
 }
+
+
+static const char update_exam[] =
+    "UPDATE Exams SET title = ?, duration = ?, questions = ? "
+    "WHERE id = ?;"
+;
+int DataIO::updateExamByID(int id, const Exam &exam) {
+    int rc;
+    sqlite3_stmt *stmt;
+    sqlite3_prepare_v2(dbcon, update_exam, sizeof (update_exam), &stmt, nullptr);
+
+    sqlite3_bind_text(stmt, 1, exam.getTitle().c_str(), exam.getTitle().size(), SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 2, exam.getDuration());
+    sqlite3_bind_text(stmt, 3, exam.serialize().c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 4, exam.getID());
+
+    rc = sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+
+    return (rc == SQLITE_DONE)? 0 : rc;
+}
