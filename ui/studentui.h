@@ -1,6 +1,7 @@
 #pragma once
 #include <wx/wx.h>
-#include "../core/exam.h"
+#include <exam.h>
+#include <dataio.h>
 #include <vector>
 
 class StudentFrame : public wxFrame
@@ -10,6 +11,7 @@ public:
     ~StudentFrame();
 
 private:
+    DataIO *db;
     wxPanel *m_panel;
     wxBoxSizer *m_sizer;
     wxStaticText *m_welcomeText;
@@ -20,7 +22,7 @@ private:
     std::vector<Question> m_questions;
     std::vector<int> m_answers;
 
-    void LoadQuestions(); // db
+    void LoadQuestions();
     void OnStartExam(wxCommandEvent &event);
     void OnViewResults(wxCommandEvent &event);
     void SetExamAnswers(const std::vector<int> &answers);

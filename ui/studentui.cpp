@@ -1,6 +1,6 @@
-#include "studentui.h"
+#include <studentui.h>
 #include <fstream>
-#include "../core/exam.h"
+#include <exam.h>
 #include <wx/textdlg.h>
 #include <wx/msgdlg.h>
 #include <wx/radiobut.h>
@@ -10,6 +10,8 @@ StudentFrame::StudentFrame(const wxString &username)
               wxDefaultPosition, wxSize(750, 600)),
       m_username(username)
 {
+    db = new DataIO("data.db");
+
     m_panel = new wxPanel(this);
     m_panel->SetBackgroundColour(wxColour(70, 70, 70));
     m_sizer = new wxBoxSizer(wxVERTICAL);
@@ -60,7 +62,7 @@ StudentFrame::StudentFrame(const wxString &username)
 void StudentFrame::LoadQuestions() // db
 {
     m_questions.clear();
-    // Db
+    m_questions = db->getExamById(1).getQuestions();
 }
 
 void StudentFrame::SetExamAnswers(const std::vector<int> &answers)
@@ -131,8 +133,7 @@ void StudentFrame::OnStartExam(wxCommandEvent &event)
     submitBtn->SetFont(wxFont(11, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
     submitBtn->SetCursor(wxCursor(wxCURSOR_HAND));
 
-    submitBtn->Bind(wxEVT_BUTTON, [this, examDlg, &radios](wxCommandEvent &)
-                    {
+    submitBtn->Bind(wxEVT_BUTTON, [this, examDlg, &radios](wxCommandEvent &) {
         std::vector<int> answers;
         answers.reserve(m_questions.size());
         for (size_t i = 0; i < m_questions.size(); i++)
@@ -149,7 +150,8 @@ void StudentFrame::OnStartExam(wxCommandEvent &event)
             answers.push_back(selected);
         }
         SetExamAnswers(answers);
-        examDlg->EndModal(wxID_OK); });
+        examDlg->EndModal(wxID_OK);
+    });
 
     topSizer->Add(submitBtn, 0, wxALIGN_CENTER | wxALL, 15);
     examDlg->SetSizer(topSizer);
@@ -158,9 +160,9 @@ void StudentFrame::OnStartExam(wxCommandEvent &event)
     {
         int score = 0;
         for (size_t i = 0; i < m_questions.size() && i < m_answers.size(); i++)
-            if (m_answers[i] >= 0 && m_answers[i] == (int)m_questions[i].getCorrect())
+            if (m_answers[i] >= 0 && m_answers[i] == m_questions[i].getCorrect())
                 score++;
-        wxString msg = wxString::Format("Your Score: %d / %lu", score, m_questions.size());
+        wxString msg = wxString::Format("Your Score: %d / %llu", score, m_questions.size());
         wxMessageBox(msg, "Exam Result", wxOK | wxICON_INFORMATION);
     }
 
@@ -178,8 +180,10 @@ void StudentFrame::OnViewResults(wxCommandEvent &event)
     for (size_t i = 0; i < m_questions.size() && i < m_answers.size(); i++)
         if (m_answers[i] >= 0 && m_answers[i] == (int)m_questions[i].getCorrect())
             score++;
-    wxString msg = wxString::Format("Your Score: %d / %lu", score, m_questions.size());
+    wxString msg = wxString::Format("Your Score: %d / %llu", score, m_questions.size());
     wxMessageBox(msg, "Exam Result", wxOK | wxICON_INFORMATION);
 }
 
-StudentFrame::~StudentFrame() {}
+StudentFrame::~StudentFrame() {
+    delete db;
+}

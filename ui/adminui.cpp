@@ -1,15 +1,16 @@
-#include "adminui.h"
+#include <adminui.h>
 #include <wx/msgdlg.h>
 
 AdminFrame::AdminFrame(const wxString &username)
-    : wxFrame(nullptr, wxID_ANY, "Exam Dashboard - " + username, wxDefaultPosition, wxSize(900, 600)),
+    : wxFrame(nullptr, wxID_ANY, "Examiner - " + username, wxDefaultPosition, wxSize(900, 600)),
       m_username(username),
       m_questionsPanel(nullptr),
       m_questionsTableSizer(nullptr),
       m_pageLabel(nullptr),
       m_currentPage(1)
 {
-    LoadQuestionsFromDatabase();
+    db = new DataIO("data.db");
+    LoadExam();
 
     wxPanel *mainPanel = new wxPanel(this);
     mainPanel->SetBackgroundColour(wxColour(70, 70, 70));
@@ -36,8 +37,7 @@ AdminFrame::AdminFrame(const wxString &username)
     mainSizer->Add(headerPanel, 0, wxEXPAND);
 
     m_notebook = new wxNotebook(mainPanel, wxID_ANY);
-    m_notebook->AddPage(CreateDashboardPage(), "Dashboard");
-    m_notebook->AddPage(CreateResultsPage(), "View Results");
+    m_notebook->AddPage(CreateDashboardPage(), "Exam Edit");
     mainSizer->Add(m_notebook, 1, wxEXPAND | wxALL, 5);
 
     mainPanel->SetSizer(mainSizer);
@@ -95,7 +95,7 @@ void AdminFrame::RefreshQuestionsTable()
     m_questionsTableSizer->Clear(true);
 
     int start = (m_currentPage - 1) * QUESTIONS_PER_PAGE;
-    int end = std::min(start + QUESTIONS_PER_PAGE, (int)m_questions.size());
+    int end = std::min(start + QUESTIONS_PER_PAGE, (int)m_exam.size());
 
     for (int i = start; i < end; i++)
     {
@@ -103,7 +103,7 @@ void AdminFrame::RefreshQuestionsTable()
         row->SetBackgroundColour(i % 2 == 0 ? wxColour(55, 55, 55) : wxColour(65, 65, 65));
 
         wxBoxSizer *rowSizer = new wxBoxSizer(wxHORIZONTAL);
-        wxStaticText *qText = new wxStaticText(row, wxID_ANY, wxString::Format("%d- %s", i + 1, m_questions[i].getText()));
+        wxStaticText *qText = new wxStaticText(row, wxID_ANY, wxString::Format("%d- %s", i + 1, m_exam.getQuestion(i).getText()));
         qText->SetForegroundColour(*wxWHITE);
         qText->Wrap(600);
 
@@ -126,10 +126,8 @@ void AdminFrame::RefreshQuestionsTable()
     m_questionsPanel->Layout();
     m_questionsPanel->FitInside();
 }
-void AdminFrame::LoadQuestionsFromDatabase() { m_questions.clear(); }
-void AdminFrame::SaveQuestionToDatabase(const Question &q) {}
-void AdminFrame::UpdateQuestionInDatabase(int index, const Question &q) {}
-void AdminFrame::DeleteQuestionFromDatabase(int index) {}
+void AdminFrame::LoadExam() { m_exam = db->getExamById(1); }
+void AdminFrame::SaveExam() { db->updateExamByID(1, m_exam); }
 
 AddQuestionDialog::AddQuestionDialog(wxWindow *parent, const wxString &title)
     : wxDialog(parent, wxID_ANY, title, wxDefaultPosition, wxSize(450, 550))
@@ -216,12 +214,12 @@ void AdminFrame::OnAddQuestions(wxCommandEvent &event)
         choices.push_back(dlg.choices[i]->GetValue().ToStdString());
     q.setChoice(choices);
     q.setCorrect(dlg.correctAns->GetSelection());
-    q.setID(m_questions.size() + 1);
+    q.setID(m_exam.size());
 
-    m_questions.push_back(q);
-    SaveQuestionToDatabase(q);
+    m_exam.addQuestion(q);
+    SaveExam();
 
-    int total = (int)m_questions.size();
+    int total = (int)m_exam.size();
     int totalPages = (total + QUESTIONS_PER_PAGE - 1) / QUESTIONS_PER_PAGE;
     m_currentPage = totalPages;
 
@@ -230,10 +228,10 @@ void AdminFrame::OnAddQuestions(wxCommandEvent &event)
 
 void AdminFrame::OnEditQuestionAtIndex(int index)
 {
-    if (index < 0 || index >= (int)m_questions.size())
+    if (index < 0 || index >= (int)m_exam.size())
         return;
 
-    Question &q = m_questions[index];
+    Question q = m_exam.getQuestion(index);
     AddQuestionDialog dlg(this, "Edit Question");
     dlg.qInput->SetValue(q.getText());
 
@@ -259,7 +257,8 @@ void AdminFrame::OnEditQuestionAtIndex(int index)
         q.setChoice(newChoices);
         q.setCorrect(dlg.correctAns->GetSelection());
 
-        UpdateQuestionInDatabase(index, q);
+        m_exam.modifyQuestion(index, q);
+        SaveExam();
         RefreshQuestionsTable();
         wxMessageBox("Question updated!", "Success", wxOK | wxICON_INFORMATION);
     }
@@ -268,7 +267,7 @@ void AdminFrame::OnDeleteQuestionAtIndex(int index)
 {
     if (wxMessageBox("Delete this question?", "Confirm", wxYES_NO) == wxYES)
     {
-        m_questions.erase(m_questions.begin() + index);
+        m_exam.removeQuestion(index);
         RefreshQuestionsTable();
     }
 }
@@ -288,7 +287,7 @@ void AdminFrame::OnPagePrev(wxCommandEvent &event)
 }
 void AdminFrame::OnPageNext(wxCommandEvent &event)
 {
-    int total = (int)m_questions.size();
+    int total = (int)m_exam.size();
     int totalPages = total == 0 ? 1 : (total + QUESTIONS_PER_PAGE - 1) / QUESTIONS_PER_PAGE;
     if (m_currentPage < totalPages)
     {
@@ -296,31 +295,7 @@ void AdminFrame::OnPageNext(wxCommandEvent &event)
         RefreshQuestionsTable();
     }
 }
-wxPanel *AdminFrame::CreateResultsPage()
-{
-    wxPanel *panel = new wxPanel(m_notebook);
-    panel->SetBackgroundColour(wxColour(70, 70, 70));
-    wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
-    wxStaticText *titleText = new wxStaticText(panel, wxID_ANY, "Students Results");
-    titleText->SetForegroundColour(*wxWHITE);
-    titleText->SetFont(wxFont(16, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
-    sizer->Add(titleText, 0, wxALL, 20);
-
-    wxListCtrl *examListCtrl = new wxListCtrl(panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 
-                                              wxLC_REPORT | wxBORDER_SUNKEN);
-    
-    examListCtrl->SetBackgroundColour(wxColour(50, 50, 50));
-    examListCtrl->SetForegroundColour(*wxWHITE);
-
-    examListCtrl->InsertColumn(0, "Student ID", wxLIST_FORMAT_LEFT, 80);
-    examListCtrl->InsertColumn(1, "Exam Title", wxLIST_FORMAT_LEFT, 350);
-    examListCtrl->InsertColumn(2, "Grade", wxLIST_FORMAT_CENTER, 150);
-
-    sizer->Add(examListCtrl, 1, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 20);
-
-    panel->SetSizer(sizer);
-    return panel;
+AdminFrame::~AdminFrame() {
+    delete db;
 }
-
-AdminFrame::~AdminFrame() {}

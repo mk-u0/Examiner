@@ -11,7 +11,7 @@ int DataIO::deleteAdmin(int id) {
     sqlite3_bind_int(stmt, 1, id);
     rc = sqlite3_step(stmt);
     sqlite3_finalize(stmt);
-    return rc; 
+    return rc;
 }
 
 static const char delete_student[] = "DELETE FROM Students WHERE id = ?;";

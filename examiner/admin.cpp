@@ -2,13 +2,15 @@
 #include <dataio.h>
 #include <wx/wx.h>
 #include <login.h>
-#include "../ui/adminui.h"
+#include <adminui.h>
+
 
 class AdminApp : public wxApp
 {
 public:
     bool OnInit() override;
 };
+wxIMPLEMENT_APP(AdminApp);
 
 LoginFrame *globalLoginFrame = nullptr;
 void Auth(const char *username, const char *pass)
@@ -30,7 +32,6 @@ void Auth(const char *username, const char *pass)
 
         if (globalLoginFrame)
         {
-
             globalLoginFrame->Close();
         }
     }
@@ -39,29 +40,18 @@ void Auth(const char *username, const char *pass)
         wxMessageBox("Incorrect Password!", "Login Failed");
     }
 }
-// This defines the equivalent of main() for the current platform.
-wxIMPLEMENT_APP(AdminApp);
 
 bool AdminApp::OnInit()
 {
     DataIO io("data.db");
     io.init();
 
-    int test_rc = io.deleteStudent(999);
-
-    if (test_rc == SQLITE_DONE || test_rc == SQLITE_OK)
-    {
-        wxLogMessage("Logic Check: Delete command executed successfully!");
-    }
-    else
-    {
-        wxLogMessage("Logic Check: Something is wrong. Error Code: %d", test_rc);
-    }
-
     Admin admin("admin", "admin");
     io.addAdmin(admin);
-    admin = io.getAdminByUser("admin");
-    bool match = admin.verifyPassword("admin");
+    Exam exam;
+    exam.setID(1);
+    exam.setDuration(30);
+    io.addExam(exam);
     globalLoginFrame = new LoginFrame();
     globalLoginFrame->setCallback(Auth);
     globalLoginFrame->Show();

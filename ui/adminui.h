@@ -4,9 +4,9 @@
 #include <wx/wx.h>
 #include <wx/notebook.h>
 #include <wx/scrolwin.h>
-#include <wx/listctrl.h>
 #include <vector>
 #include <exam.h>
+#include <dataio.h>
 
 class AddQuestionDialog : public wxDialog
 {
@@ -32,16 +32,14 @@ private:
     void OnEditQuestionAtIndex(int index);
     void OnDeleteQuestionAtIndex(int index);
 
-    void LoadQuestionsFromDatabase();
-    void SaveQuestionToDatabase(const Question &q);
-    void UpdateQuestionInDatabase(int index, const Question &q);
-    void DeleteQuestionFromDatabase(int index);
+    void LoadExam();
+    void SaveExam();
 
     wxPanel *CreateDashboardPage();
-    wxPanel* CreateResultsPage();
 
+    DataIO *db;
     wxString m_username;
-    std::vector<Question> m_questions;
+    Exam m_exam;
 
     wxNotebook *m_notebook;
     wxScrolledWindow *m_questionsPanel;

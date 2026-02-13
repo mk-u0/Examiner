@@ -19,5 +19,6 @@ target_sources(ui
 target_link_libraries(ui
     PRIVATE
     core
+    dbio
     ${wxWidgets_LIBRARIES}
 )

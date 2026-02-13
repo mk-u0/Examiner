@@ -67,6 +67,7 @@ public:
     inline int getID() const { return id; }
     inline int getDuration() const { return duration; }
     inline const std::string &getTitle() const { return title; }
+    inline const std::vector<Question> &getQuestions() const { return questions; }
 
     /* Setters */
     inline void setID(int id) { this->id = id; }

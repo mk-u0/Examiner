@@ -2,13 +2,14 @@
 #include <dataio.h>
 #include <wx/wx.h>
 #include <login.h>
-#include "../ui/studentui.h"
+#include <studentui.h>
 
 class StudentApp : public wxApp
 {
 public:
     bool OnInit() override;
 };
+wxIMPLEMENT_APP(StudentApp);
 
 LoginFrame *globalLoginFrame = nullptr;
 void Auth(const char *username, const char *pass)
@@ -40,18 +41,13 @@ void Auth(const char *username, const char *pass)
     }
 }
 
-// This defines the equivalent of main() for the current platform.
-wxIMPLEMENT_APP(StudentApp);
-
 bool StudentApp::OnInit()
 {
     DataIO io("data.db");
     io.init();
 
-    Student stu{"mk", "12345678"};
+    Student stu{"mk", "1234"};
     io.addStudent(stu);
-    stu = io.getStudentByUser("mk");
-    bool match = stu.verifyPassword("12345678");
     globalLoginFrame = new LoginFrame();
     globalLoginFrame->setCallback(Auth);
     globalLoginFrame->Show();
